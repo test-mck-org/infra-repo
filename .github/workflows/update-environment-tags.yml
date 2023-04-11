@@ -1,5 +1,5 @@
 
-name: SAMPLE_PRODUCT_UPDATE_ENVIRONMENT_TAGS
+name: PRODUCT_UPDATE_ENVIRONMENT_TAGS
 
 on:   
   workflow_dispatch: 
@@ -34,17 +34,7 @@ on:
         required: true
 
 jobs:
-  build_matrix:
-    outputs:
-      matrix: ${{ steps.build_matrix.outputs.matrix }}
-    runs-on: [ubuntu-latest]
-    steps:
-      - id: build_matrix
-        name: build_matrix
-        run: echo "::set-output name=matrix::{\"include\":[{\"infra_manifest\":\"argocd-helm-app-1.yaml\",\"image_tag\":\"${{ github.event.inputs.app1_tag || inputs.app1_tag }}\"},{\"infra_manifest\":\"argocd-helm-app-2.yaml\",\"image_tag\":\"${{ github.event.inputs.app2_tag || inputs.app2_tag }}\"}]}"  
-     
   update-environment-tags:
-    needs: build_matrix
     env:
       REGISTRY: mckinsey-docker.jfrog.io
     runs-on: [ubuntu-latest]
@@ -65,28 +55,3 @@ jobs:
           role-to-assume: arn:aws:iam::468804646140:role/role-migfactory-14313-git-provisioningagent
           aws-region: us-east-1
           
-#       - name: Checkout Infra repository
-#         uses: actions/checkout@v2.4.0
-#         if: ${{ matrix.image_tag }}
-#         with:
-#           repository: test-mck-org/infra-repo
-#           path: './infra'
-#           fetch-depth: 0
-#           ref: main
-#           token: ${{ secrets.GH_PAT }}
-        
-#       - name: Check already existing tag in ${{ inputs.environment || github.event.inputs.environment }} environment for ${{ matrix.infra_manifest }} manifest
-#         if: ${{ matrix.image_tag }}
-#         run: docker run --user `id -u` -e UID=`id -u` -e GID=`id -g` --rm -v "$(pwd):/repo" -w /repo mckinsey-docker.jfrog.io/mikefarah/yq:4 e '.spec.source.helm.values' ./infra/${{ inputs.environment || github.event.inputs.environment }}/${{ matrix.infra_manifest}} > ${{ matrix.infra_manifest}}_values_file
-        
-#       - name: Check already existing tag in ${{ inputs.environment || github.event.inputs.environment }} environment for ${{ matrix.infra_manifest }} manifest
-#         if: ${{ matrix.image_tag }}
-#         run: docker run --user `id -u` -e UID=`id -u` -e GID=`id -g` --rm -v "$(pwd):/repo" -w /repo   mckinsey-docker.jfrog.io/mikefarah/yq:4 e '.image.tag' ${{ matrix.infra_manifest}}_values_file > ${{ matrix.infra_manifest}}_old_git_tag
-        
-#       - name: Update ${{ inputs.environment || github.event.inputs.environment }} environment infra manifest for ${{ matrix.infra_manifest }} in local repo
-#         if: ${{ matrix.image_tag }}
-#         run: docker run --user `id -u` -e UID=`id -u` -e GID=`id -g` --rm -v "$(pwd):/repo" -w /repo -e tag=tag:" ${{ matrix.image_tag }}"  mckinsey-docker.jfrog.io/mikefarah/yq:4   eval '(.spec.source.helm.values |= sub("(tag:.*)", strenv(tag)))' -i ./infra/${{ inputs.environment || github.event.inputs.environment }}/${{ matrix.infra_manifest}}
-          
-#       - name: Update ${{ inputs.environment || github.event.inputs.environment }} environment infra manifest for ${{ matrix.infra_manifest }} in remote repo
-#         if: ${{ matrix.image_tag }}
-#         run: cd infra && git --version && echo "PWD is:$(ls -ltr)" && git status && if [[  "${{ matrix.image_tag }}" == `cat ../${{ matrix.infra_manifest }}_old_git_tag` ]] ; then echo "No new tag to be pushed" ; else echo "updating new tag.." && git config user.name "svc-name" && git config user.email "CloudApp-Migration-Factory@mckinsey.com" && git add ${{ inputs.environment || github.event.inputs.environment }}/${{ matrix.infra_manifest}} && git status && git commit -m "Update ${{ inputs.environment || github.event.inputs.environment }} manifest to ${{ matrix.image_tag }} at ${{ matrix.infra_manifest }}" && git push ; fi;
