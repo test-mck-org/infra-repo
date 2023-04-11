@@ -66,15 +66,15 @@ jobs:
           username: ${{ secrets.CLOUD_ARTIFACTORY_USER }}
           password: ${{ secrets.CLOUD_ARTIFACTORY_PASS }}
           
-      - name: Checkout Infra repository
-        uses: actions/checkout@v2.4.0
-        if: ${{ matrix.image_tag }}
-        with:
-          repository: test-mck-org/infra-repo
-          path: './infra'
-          fetch-depth: 0
-          ref: main
-          token: ${{ secrets.GH_PAT }}
+#       - name: Checkout Infra repository
+#         uses: actions/checkout@v2.4.0
+#         if: ${{ matrix.image_tag }}
+#         with:
+#           repository: test-mck-org/infra-repo
+#           path: './infra'
+#           fetch-depth: 0
+#           ref: main
+#           token: ${{ secrets.GH_PAT }}
         
 #       - name: Check already existing tag in ${{ inputs.environment || github.event.inputs.environment }} environment for ${{ matrix.infra_manifest }} manifest
 #         if: ${{ matrix.image_tag }}
