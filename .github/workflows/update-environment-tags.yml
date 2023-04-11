@@ -37,7 +37,7 @@ jobs:
   build_matrix:
     outputs:
       matrix: ${{ steps.build_matrix.outputs.matrix }}
-    runs-on: [linux, McK]
+    runs-on: [ubuntu-latest]
     steps:
       - id: build_matrix
         name: build_matrix
