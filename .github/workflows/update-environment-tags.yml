@@ -32,8 +32,6 @@ on:
         required: true
       CLOUD_ARTIFACTORY_USER:
         required: true
-      GH_PAT:
-        required: true
 
 jobs:
   build_matrix:
