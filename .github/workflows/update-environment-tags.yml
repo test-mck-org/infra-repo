@@ -47,7 +47,7 @@ jobs:
     needs: build_matrix
     env:
       REGISTRY: mckinsey-docker.jfrog.io
-    runs-on: [linux, McK]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix: ${{fromJson(needs.build_matrix.outputs.matrix)}}
       max-parallel: 1
