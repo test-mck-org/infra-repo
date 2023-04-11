@@ -43,12 +43,12 @@ jobs:
       packages: write
       id-token: write
     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v2.4.0
-#         with: 
-#           fetch-depth: 0
-#           path: './infra'
-#           ref: main
+      - name: Checkout repository
+        uses: actions/checkout@v2.4.0
+        with: 
+          fetch-depth: 0
+          path: './infra'
+          ref: main
           
       - uses: actions/github-script@v6
         id: script
@@ -63,7 +63,14 @@ jobs:
             
       - run: |
           IDTOKEN=$(curl -H "Authorization: bearer  ${{steps.script.outputs.TOKEN}}" ${{steps.script.outputs.IDTOKENURL}}  -H "Accept: application/json; api-version=2.0" -H "Content-Type: application/json" -d "{}" | jq -r '.value')
-          echo $IDTOKEN
+          cd infra
+          echo $IDTOKEN > token_file
+          touch test_file_6
+          git add .
+          git config user.name svc-eti-github
+          git config user.email "eti_dev_team_&_ews@mckinsey.com"
+          git commit -m "Update compile image version"
+          git push origin
           
           
       - name: Configure AWS credentials
